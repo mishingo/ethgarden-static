@@ -14,6 +14,16 @@ export default {
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
+    script: [
+      { src: 'https://cdn.jsdelivr.net/npm/@invisible-college/keythereum@1.1.3/dist/keythereum-1.0.4.min.js',
+        type: 'text/javascript',
+      }
+    ],
+    script: [
+      { src: 'https://cdn.jsdelivr.net/npm/demo-webify@0.3.4-alpha.2/dist/democracy.0.3.4_alpha.2.min.js',
+        type: 'text/javascript',
+      }
+    ],
   },
   /*
   ** Customize the progress-bar color
