@@ -13,7 +13,7 @@ export default {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
-    ]
+    ],
     script: [
       { src: 'https://cdn.jsdelivr.net/npm/@invisible-college/keythereum@1.1.3/dist/keythereum-1.0.4.min.js',
         type: 'text/javascript',
