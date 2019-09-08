@@ -4,3 +4,19 @@
     <nuxt />
   </div>
 </template>
+<script>
+export default {
+  head: {
+    bodyAttrs: {
+      class: 'register'
+    }
+  }
+}
+</script>
+<style>
+body.register{
+  background: url(/green-gradient.png) no-repeat center center fixed; 
+  background-size: cover;
+  min-height: 110vh;
+}
+</style>
