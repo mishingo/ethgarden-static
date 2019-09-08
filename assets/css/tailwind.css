@@ -6,3 +6,18 @@
   max-width: 1000px;
   margin: 0 auto;
 }
+.container-small{
+  max-width: 750px;
+  margin: 0 auto;
+}
+
+.bg-gradient{
+  background-image: url(/green-gradient.png);
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+}
+
+*{
+  outline: none;
+}
