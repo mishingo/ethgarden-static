@@ -32,6 +32,11 @@ import 'vue-form-wizard/dist/vue-form-wizard.min.css'
       updateSeconds: 10,
       updateCallback: (secondsLeft) => { console.log(`${secondsLeft} seconds left`) },
     })
+    demo.chainId = await demo.eth.net_version()
+    const thisPassword = localStorage.getItem(`demo/${demo.chainId}/thisPassword`)
+    const { signerEth } = await demo.keys.wallet.prepareSignerEth({
+      address: demo.thisAddress, password: thisPassword })
+    demo.thisSignerEth = signerEth
     // Do ETHGarden-specific init here
   }
 
@@ -48,7 +53,7 @@ import 'vue-form-wizard/dist/vue-form-wizard.min.css'
     },
     computed: {
       ethaddress: function() {
-        return  localStorage.getItem('demo/22/thisAddress')  
+        return  localStorage.getItem(`demo/${demo.chainId}/thisAddress`)  
       },
       personalsite: function() {
        return `<h1> hello Eth! I am ${this.fullname} </h1>`

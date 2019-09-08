@@ -22,6 +22,25 @@
 </template>
 <script>
 import { mapFields } from 'vuex-map-fields';
+const ENS = require('ethereum-ens')
+const PUBLIC_RESOLVER_ADDRESS="0xD3ddcCDD3b25A8a7423B5bEe360a42146eb4Baf3"
+const { assert } = require('chai')
+
+const registerFunc = async (name) => {
+  const ens = new ENS(demo.thisSignerEth.provider)
+  //const ens = new ENS({provider: signerEth.provider, network: demo.chainId })
+  await ens.resolver('ourgarden.eth').addr().then((addr) => console.log('Address', addr))
+  const params = { from: demo.thisAddress, gas: demo.config['GAS_LIMIT'] }
+  const fullName = `${name}.ourgarden.eth`
+  const txHash1 = ens.setSubnodeOwner(fullName, demo.thisAddress, params)
+  console.log(`Setting subNodeOwner txHash ${txHash1}`)
+  const txHash2 = await ens.setResolver(fullName, PUBLIC_RESOLVER_ADDRESS, params)
+  console.log(`Setting setResolver txHash ${txHash2}`)
+  const resolver = ens.resolver(fullName)
+  const txHash3 = await resolver.setAddr(demo.thisAddress, params)
+  console.log(`Setting address txHash ${txHash3}`)
+}
+
 export default {
   layout: 'register',
   data (){
@@ -35,7 +54,9 @@ export default {
   methods: {
     registeruser: function() {
       if(this.username !== ''){
-        this.$router.push('/register/password')
+        registerFunc
+          .then(() => { this.$router.push('/register/password') })
+          .catch((e) => { console.error(JSON.stringify(e)) })
       } else {
         this.invalid = true
       }

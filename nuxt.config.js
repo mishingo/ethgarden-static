@@ -15,13 +15,16 @@ export default {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ],
     script: [
+      { innerHTML: `window.NODE_ENV = 'MAINNET'; window.INFURA_PROJECT_ID = "590812d0023e4798aba2a764c477f504"; window["MAINNET.DB_URL"] = "https://ganache.arcology.nyc:7001"`, type: 'text/javascript',
+         },
       { src: 'https://cdn.jsdelivr.net/npm/@invisible-college/keythereum@1.1.3/dist/keythereum-1.0.4.min.js',
         type: 'text/javascript',
       },
-      { src: 'https://cdn.jsdelivr.net/npm/demo-webify@0.3.4-alpha.2/dist/democracy.0.3.4_alpha.2.min.js',
+      { src: 'https://cdn.jsdelivr.net/npm/demo-webify@0.3.5-alpha.4/dist/democracy.0.3.5_alpha.4.min.js',
         type: 'text/javascript',
       }
     ],
+     __dangerouslyDisableSanitizers: ['script']
   },
   /*
   ** Customize the progress-bar color
