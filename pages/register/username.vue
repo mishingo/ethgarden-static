@@ -21,12 +21,13 @@
 </div>
 </template>
 <script>
-import { mapFields } from 'vuex-map-fields';
+import { mapFields } from 'vuex-map-fields'
 const ENS = require('ethereum-ens')
+import { setContenthash } from '@ensdomains/ui'
 const PUBLIC_RESOLVER_ADDRESS="0xD3ddcCDD3b25A8a7423B5bEe360a42146eb4Baf3"
 const { assert } = require('chai')
 
-const registerFunc = async (name) => {
+const registerFunc = async (name, contentHash) => {
   const ens = new ENS(demo.thisSignerEth.provider)
   //const ens = new ENS({provider: signerEth.provider, network: demo.chainId })
   await ens.resolver('ourgarden.eth').addr().then((addr) => console.log('Address', addr))
@@ -39,6 +40,13 @@ const registerFunc = async (name) => {
   const resolver = ens.resolver(fullName)
   const txHash3 = await resolver.setAddr(demo.thisAddress, params)
   console.log(`Setting address txHash ${txHash3}`)
+  const txHash4 = await setContenthash(fullName, contentHash)
+  return {
+    txHash1,
+    txHash2,
+    txHash3,
+    txHash4,
+  }
 }
 
 export default {
@@ -54,9 +62,9 @@ export default {
   methods: {
     registeruser: function() {
       if(this.username !== ''){
-        registerFunc
+        registerFunc(this.username)
           .then(() => { this.$router.push('/register/password') })
-          .catch((e) => { console.error(JSON.stringify(e)) })
+          .catch((e) => { console.error(JSON.stringify(e.message)) })
       } else {
         this.invalid = true
       }

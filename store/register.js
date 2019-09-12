@@ -2,7 +2,11 @@ import { getField, updateField } from 'vuex-map-fields';
 
 // initial state
 const state = () => ({
-  username: ''
+  username: '',
+  avatar: '',
+  name: '',
+  location: '',
+  bio: ''
 })
 
 // actions
@@ -12,11 +16,21 @@ const getters = {
 
 // mutations
 const mutations = {
-  updateField
+  updateField,
+  setavatarhash (state, avatarhash) {
+    state.avatar = avatarhash.avatarhash
+  }
+}
+
+const actions = {
+  addavatarhash ({ commit }, { avatarhash }) {
+    commit('setavatarhash', { avatarhash })
+  }
 }
 
 export default {
   state,
   getters,
+  actions,
   mutations
 }
