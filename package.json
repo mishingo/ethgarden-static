@@ -14,6 +14,8 @@
     "@ensdomains/ui": "^1.1.18",
     "@nuxtjs/axios": "^5.3.6",
     "chai": "^4.2.0",
+    "content-hash": "^2.4.3",
+    "demo-webify": "^0.3.6",
     "democracy.js": "^0.3.5-alpha.4",
     "ethereum-ens": "^0.7.8",
     "nuxt": "^2.0.0",

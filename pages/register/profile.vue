@@ -5,7 +5,7 @@
       <div class="text-5xl text-white font-black leading-tight px-8">
         Personalize Your Wallet Profile
       </div>
-      <p class="text-white font-bold">Add some personal information for others to see when they visit carmen.ourgarden.eth</p>
+      <p class="text-white font-bold">Add some personal information for others to see when they visit {{name}}</p>
     </div>
     <div class="border border-yellow-300 mt-8 p-12 w-full rounded">
       <div class="flex">
@@ -67,13 +67,34 @@
 <script>
 import { mapState } from 'vuex'
 import { mapFields } from 'vuex-map-fields'
+import { setupENS, setContenthash } from '@ensdomains/ui'
+const ENS = require('ethereum-ens')
+
+const contentHash = require('content-hash')
+
+const clientInit = require('demo-webify')
+// TODO This should be moved into init / mounted
 
 export default {
   layout: 'register',
   data (){
     return {
       avatarhash: null,
-      infurl: 'https://ipfs.io/ipfs/'
+      infurl: 'https://ipfs.io/ipfs/',
+    }
+  },
+  mounted() {
+    clientInit().then(() => {
+      //setupENS({ customProvider: demo.thisSignerEth.provider })
+      const ens = new ENS(demo.thisSignerEth.provider)
+      try {
+        return ens.reverse(demo.thisAddress)
+      } catch(e) { this.ensName = 'ENS name not found' }
+    })
+    .then((name) => this.ensName = name)
+  },
+  methods: {
+    init: () => {
     }
   },
   computed: {
@@ -84,6 +105,7 @@ export default {
       location: state => state.location,
       bio: state => state.bio,
     }),
+    name: function() { return this.ensName },
     ...mapFields('register', ['name', 'location', 'bio']),
     profilehtml: function (){
       return `<div class="border border-yellow-300 mt-8 p-12 w-8/12 rounded"> <div class="text-center"> <div class="rounded-full flex justify-center items-center bg-cover mx-auto" style="height: 150px; width: 150px;background-image: url(https://ipfs.io/ipfs/${this.avatarhash});" > </div><h1 class="text-white text-4xl font-bold mt-8">${this.name}</h1> <div class="text-white"> <svg class="h-4 inline-block text-white mr-2" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="map-marker-alt" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0zM192 272c44.183 0 80-35.817 80-80s-35.817-80-80-80-80 35.817-80 80 35.817 80 80 80z" class=""></path></svg>${this.location}</div></div><div class="flex justify-between items-center mt-8 border-b border-yellow-300 pb-12"> <button type="button" class="rounded-full mx-auto border border-yellow-300 px-8 py-2 bg-yellow-300 text-black font-bold">Send Payment</button> <button type="button" class="rounded-full mx-auto border border-yellow-300 px-8 py-2 text-yellow-300 font-bold">Add Friend</button> </div><div class="mt-8 text-white"> <div class="text-lg font-bold"> Bio </div><p class="text-white">${this.bio}</p></div></div>` 
@@ -99,10 +121,16 @@ export default {
         .then(function (response) {
           // this is the profile html
           console.log(response.data.Hash)
+          const contentH = contentHash.fromIpfs(response.data.Hash)
+          return setContenthash(ensName, contentH)
+        })
+        .then(function (txReceipt) {
+          console.log(`Setting content hash ${JSON.stringify(txReceipt)}`)
           self.$router.push('/register/success')
         })
         .catch(function (error) {
           console.log(error);
+          self.$router.push('/register/error')
         });
 
     },

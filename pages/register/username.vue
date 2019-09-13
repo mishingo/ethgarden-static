@@ -24,7 +24,6 @@
 import { mapFields } from 'vuex-map-fields'
 const { assert } = require('chai')
 const ENS = require('ethereum-ens')
-import { setupENS, setContenthash } from '@ensdomains/ui'
 const PUBLIC_RESOLVER_ADDRESS={
   "1": "0xD3ddcCDD3b25A8a7423B5bEe360a42146eb4Baf3",
   "4": "0x2396A687f75f1a13e3927F1841B291350b0ED977",
@@ -44,9 +43,7 @@ const registerFunc = async (name, contentHash) => {
   console.log(`Setting setResolver txHash ${JSON.stringify(txHash2)}`)
   const resolver = ens.resolver(fullName)
   const txHash3 = await resolver.setAddr(demo.thisAddress, params)
-  await setupENS({ customProvider: demo.thisSignerEth.provider })
   console.log(`Setting address txHash ${JSON.stringify(txHash3)}`)
-  const txHash4 = await setContenthash(fullName, contentHash)
   return {
     txHash1,
     txHash2,
