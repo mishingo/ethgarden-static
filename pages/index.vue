@@ -20,7 +20,13 @@
 <script>
 import { mapFields } from 'vuex-map-fields'
 
+const clientInit = require('demo-webify')
+
 export default {
-  layout: 'register'
+  layout: 'register',
+  methods: { init: clientInit },
+  mounted() {
+    this.init()
+  },
 }
 </script>

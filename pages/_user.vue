@@ -6,19 +6,44 @@
 </template>
 <script>
 
+const ENS = require('ethereum-ens')
+const clientInit = require('demo-webify')
+
 export default {
   layout: 'register',
   data (){
     return {
       userprofile: null,
       userparam: null,
-      ens: null
+      ens: null,
+      address: null,
     }
   },
   mounted (){
     this.gethtml()
-    this.userparam = this.$router.currentRoute.params.user
-    this.ens = `${this.$router.currentRoute.params}.user.ourgarden.eth`
+    try {
+      clientInit()
+        .then(() => {
+          this.ens = new ENS(demo.thisSignerEth.provider)
+          this.userparam = this.$router.currentRoute.params.user
+          console.log(`Username ${this.userparam}`)
+          return this.ens.resolver(`${this.userparam}.ourgarden.eth`)
+        })
+        .then((resolver) => {
+          this.ensResolver = resolver; return resolver.addr()
+        })
+        .then((addr) => {
+          this.address = addr;
+          console.log(`Address ${this.address}`)
+          return this.ensResolver.content()
+        })
+        .then((content) => {
+          this.content = content;
+          console.log(`Content ${this.content}`)
+        })
+    } catch(e) {
+      console.error(e.message)
+    }
   },
   methods: {
     gethtml: function(){

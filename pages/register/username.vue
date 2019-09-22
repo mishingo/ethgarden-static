@@ -21,7 +21,37 @@
 </div>
 </template>
 <script>
-import { mapFields } from 'vuex-map-fields';
+import { mapFields } from 'vuex-map-fields'
+const { assert } = require('chai')
+const ENS = require('ethereum-ens')
+const PUBLIC_RESOLVER_ADDRESS={
+  "1": "0xD3ddcCDD3b25A8a7423B5bEe360a42146eb4Baf3",
+  "4": "0x2396A687f75f1a13e3927F1841B291350b0ED977",
+}
+
+const registerFunc = async (name, contentHash) => {
+  const ens = new ENS(demo.thisSignerEth.provider)
+  //const ens = new ENS({provider: signerEth.provider, network: demo.chainId })
+  await ens.resolver('ourgarden.eth').addr().then((addr) => console.log('Address', addr))
+  assert(PUBLIC_RESOLVER_ADDRESS[demo.chainId])
+  const params = { from: demo.thisAddress, gas: demo.config['GAS_LIMIT'] }
+  const fullName = `${name}.ourgarden.eth`
+  console.log(`fullName ${fullName}`)
+  const txHash1 = await ens.setSubnodeOwner(fullName, demo.thisAddress, params)
+  console.log(`Setting subNodeOwner txHash ${JSON.stringify(txHash1)}`)
+  const txHash2 = await ens.setResolver(fullName, PUBLIC_RESOLVER_ADDRESS[demo.chainId], params)
+  console.log(`Setting setResolver txHash ${JSON.stringify(txHash2)}`)
+  const resolver = ens.resolver(fullName)
+  const txHash3 = await resolver.setAddr(demo.thisAddress, params)
+  console.log(`Setting address txHash ${JSON.stringify(txHash3)}`)
+  return {
+    txHash1,
+    txHash2,
+    txHash3,
+    txHash4,
+  }
+}
+
 export default {
   layout: 'register',
   data (){
@@ -35,7 +65,9 @@ export default {
   methods: {
     registeruser: function() {
       if(this.username !== ''){
-        this.$router.push('/register/password')
+        registerFunc(this.username)
+          .then(() => { this.$router.push('/register/password') })
+          .catch((e) => { console.error(JSON.stringify(e.message)) })
       } else {
         this.invalid = true
       }

@@ -11,12 +11,19 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
+    "@ensdomains/ui": "^1.1.18",
     "@nuxtjs/axios": "^5.3.6",
+    "chai": "^4.2.0",
+    "content-hash": "^2.4.3",
+    "demo-webify": "^0.3.6",
+    "democracy.js": "^0.3.5-alpha.4",
+    "ethereum-ens": "^0.7.8",
     "nuxt": "^2.0.0",
     "tiptap": "^1.25.0",
     "vue-clipboard2": "^0.3.1",
     "vue-form-wizard": "^0.8.4",
-    "vuex-map-fields": "^1.3.5"
+    "vuex-map-fields": "^1.3.5",
+    "web3-utils": "^1.2.1"
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^1.0.0"
