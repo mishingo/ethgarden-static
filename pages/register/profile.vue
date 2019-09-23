@@ -67,8 +67,10 @@
 <script>
 import { mapState } from 'vuex'
 import { mapFields } from 'vuex-map-fields'
-import { setupENS, setContenthash } from '@ensdomains/ui'
-const ENS = require('ethereum-ens')
+import { setupENS, setContenthash, getName } from '@ensdomains/ui'
+import { fromIpfs } from 'content-hash'
+
+//const ENS = require('ethereum-ens')
 
 const contentHash = require('content-hash')
 
@@ -77,21 +79,30 @@ const clientInit = require('demo-webify')
 
 export default {
   layout: 'register',
+  methods: { init: clientInit },
   data (){
     return {
       avatarhash: null,
       infurl: 'https://ipfs.io/ipfs/',
+      ensName: 'Not yet resolved',
     }
   },
   mounted() {
     clientInit().then(() => {
-      //setupENS({ customProvider: demo.thisSignerEth.provider })
-      const ens = new ENS(demo.thisSignerEth.provider)
+      console.log(demo.config.DB_NAMESPACE)
+      return setupENS({ customProvider: demo.thisSignerEth.provider })
+    }).then(() => {
+      //const ens = new ENS(demo.thisSignerEth.provider)
       try {
-        return ens.reverse(demo.thisAddress)
+        console.log(`thisAddress ${JSON.stringify(demo.thisAddress)}`)
+        return 'blahblah.ourgarden.eth' // getName(demo.thisAddress)
+        //return ens.reverse(demo.thisAddress)
       } catch(e) { this.ensName = 'ENS name not found' }
     })
-    .then((name) => this.ensName = name)
+    .then((name) => {
+      console.log(`ensName ${JSON.stringify(name)}`)
+      this.ensName = name.name
+    })
   },
   methods: {
     init: () => {
@@ -105,7 +116,6 @@ export default {
       location: state => state.location,
       bio: state => state.bio,
     }),
-    name: function() { return this.ensName },
     ...mapFields('register', ['name', 'location', 'bio']),
     profilehtml: function (){
       return `<div class="border border-yellow-300 mt-8 p-12 w-8/12 rounded"> <div class="text-center"> <div class="rounded-full flex justify-center items-center bg-cover mx-auto" style="height: 150px; width: 150px;background-image: url(https://ipfs.io/ipfs/${this.avatarhash});" > </div><h1 class="text-white text-4xl font-bold mt-8">${this.name}</h1> <div class="text-white"> <svg class="h-4 inline-block text-white mr-2" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="map-marker-alt" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0zM192 272c44.183 0 80-35.817 80-80s-35.817-80-80-80-80 35.817-80 80 35.817 80 80 80z" class=""></path></svg>${this.location}</div></div><div class="flex justify-between items-center mt-8 border-b border-yellow-300 pb-12"> <button type="button" class="rounded-full mx-auto border border-yellow-300 px-8 py-2 bg-yellow-300 text-black font-bold">Send Payment</button> <button type="button" class="rounded-full mx-auto border border-yellow-300 px-8 py-2 text-yellow-300 font-bold">Add Friend</button> </div><div class="mt-8 text-white"> <div class="text-lg font-bold"> Bio </div><p class="text-white">${this.bio}</p></div></div>` 
@@ -122,7 +132,9 @@ export default {
           // this is the profile html
           console.log(response.data.Hash)
           const contentH = contentHash.fromIpfs(response.data.Hash)
-          return setContenthash(ensName, contentH)
+          console.log(`IPFS content hash ${contentH}`)
+          console.log(`ENS name ${JSON.stringify(self.ensName)}`)
+          //return setContenthash(self.ensName, contentH)
         })
         .then(function (txReceipt) {
           console.log(`Setting content hash ${JSON.stringify(txReceipt)}`)

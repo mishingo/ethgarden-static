@@ -1,6 +1,19 @@
 <template>
 <div class="h-screen w-screen container-small">
   <div class="flex flex-col items-center flex-1 h-full justify-center pt-24">
+    <span class="text-white text-left">
+     Network: {{ network }}
+    </span>
+    <span class="text-white text-left">
+      Your Address: {{ address }}
+    </span>
+    <span class="text-white">
+    </span>
+    <!--
+    <span class="text-white font-bold text-left">
+      ENS Name: {{ ensName }}
+    </span>
+    -->
     <div class="text-center">
       <div class="w-full flex justify-center">
         <img src="/logo.svg" width="300">
@@ -19,14 +32,35 @@
 </template>
 <script>
 import { mapFields } from 'vuex-map-fields'
-
+import { setupENS, getName } from '@ensdomains/ui'
 const clientInit = require('demo-webify')
 
 export default {
   layout: 'register',
-  methods: { init: clientInit },
+  methods: { init: async () => {
+      if (!demo.thisAddress) {
+        await clientInit()
+      }
+      return demo.thisAddress
+    }
+  },
+  data() {
+    return {
+      network: this.network,
+      address: this.address,
+      ensName: this.ensName,
+    }
+  }, 
   mounted() {
-    this.init()
+    this.init().then(() => {
+      return setupENS({customProvider: demo.thisSignerEth.provider})
+    }).then(() => {
+      this.address = demo.thisAddress 
+      this.network = demo.config.DB_NAMESPACE
+      return getName(demo.thisAddress)
+    }).then((ensName) => {
+      this.ensName = ensName.name ? ensName.name : 'Not yet registered'
+    })
   },
 }
 </script>

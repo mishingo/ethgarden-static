@@ -24,6 +24,8 @@
 import { mapFields } from 'vuex-map-fields'
 const { assert } = require('chai')
 const ENS = require('ethereum-ens')
+import { setReverseRecordName } from '@ensdomains/ui'
+
 const PUBLIC_RESOLVER_ADDRESS={
   "1": "0xD3ddcCDD3b25A8a7423B5bEe360a42146eb4Baf3",
   "4": "0x2396A687f75f1a13e3927F1841B291350b0ED977",
@@ -44,11 +46,13 @@ const registerFunc = async (name, contentHash) => {
   const resolver = ens.resolver(fullName)
   const txHash3 = await resolver.setAddr(demo.thisAddress, params)
   console.log(`Setting address txHash ${JSON.stringify(txHash3)}`)
+  const reverseResolver = ens.reverse(`${demo.thisAddress}.addr.reverse`)
+  const txHash4 = await reverseResolver.name(fullName, params)
+  console.log(`Setting reverse record name txHash ${JSON.stringify(txHash4)}`)
   return {
     txHash1,
     txHash2,
     txHash3,
-    txHash4,
   }
 }
 

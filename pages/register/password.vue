@@ -41,7 +41,7 @@ export default {
     }
   },
   mounted () {
-    this.password = localStorage.getItem('demo/22/thisPassword')  
+    this.password = localStorage.getItem(`demo/${demo.chainId}/thisPassword`)  
   },
   methods: {
     onCopy: function (e) {
