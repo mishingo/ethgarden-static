@@ -46,7 +46,7 @@ const registerFunc = async (name, contentHash) => {
   const resolver = ens.resolver(fullName)
   const txHash3 = await resolver.setAddr(demo.thisAddress, params)
   console.log(`Setting address txHash ${JSON.stringify(txHash3)}`)
-  const reverseResolver = ens.reverse(`${demo.thisAddress}.addr.reverse`)
+  const reverseResolver = ens.resolver(`${demo.thisAddress}.addr.reverse`)
   const txHash4 = await reverseResolver.name(fullName, params)
   console.log(`Setting reverse record name txHash ${JSON.stringify(txHash4)}`)
   return {

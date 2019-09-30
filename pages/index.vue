@@ -7,6 +7,9 @@
     <span class="text-white text-left">
       Your Address: {{ address }}
     </span>
+    <span class="text-white text-left">
+      Your Password: {{ password }}
+    </span>
     <span class="text-white">
     </span>
     <!--
@@ -48,6 +51,7 @@ export default {
     return {
       network: this.network,
       address: this.address,
+      password: this.password,
       ensName: this.ensName,
     }
   }, 
@@ -55,7 +59,8 @@ export default {
     this.init().then(() => {
       return setupENS({customProvider: demo.thisSignerEth.provider})
     }).then(() => {
-      this.address = demo.thisAddress 
+      this.address = demo.thisAddress
+      this.password = localStorage.getItem(`demo/${demo.chainId}/thisPassword`)
       this.network = demo.config.DB_NAMESPACE
       return getName(demo.thisAddress)
     }).then((ensName) => {
